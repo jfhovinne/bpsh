@@ -1,0 +1,51 @@
+name: bpsh
+help: A shell script for Cloud Native Buildpacks using Podman and CNB lifecycle commands
+version: 0.1.0
+
+environment_variables:
+
+commands:
+- name: build
+  alias: b
+  help: Use Cloud Native Buildpacks to create a runnable app image from source code
+
+  args:
+  - name: image
+    required: true
+    help: The name of the image that will be built
+
+  flags:
+  - long: --path
+    short: -p
+    arg: path
+    help: Path to app dir
+    default: .
+  - long: --builder
+    short: -B
+    arg: builder
+    help: Builder image
+    default: docker.io/paketobuildpacks/builder
+
+  examples:
+  - bpsh build foo/goapp --path /path/to/foo/goapp
+  - bpsh build bar/phpapp --builder docker.io/paketobuildpacks/builder:full
+
+  environment_variables:
+
+- name: rebase
+  alias: r
+  help: Rebase app image with latest run image
+  args:
+  - name: image
+    required: true
+    help: The name of the image to rebase
+
+  flags:
+  - long: --builder
+    short: -B
+    arg: builder
+    help: Builder image
+    default: docker.io/paketobuildpacks/builder
+
+  examples:
+  - bpsh rebase foo/bar
