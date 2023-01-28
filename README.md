@@ -60,6 +60,9 @@ Options:
     Builder image
     Default: docker.io/paketobuildpacks/builder
 
+  --authfile AUTHFILE
+    Path to file containing registry credentials
+
 Arguments:
   IMAGE
     The name of the image that will be built
@@ -67,6 +70,7 @@ Arguments:
 Examples:
   bpsh build foo/goapp --path /path/to/foo/goapp
   bpsh build bar/phpapp --builder docker.io/paketobuildpacks/builder:full
+  bpsh build foo/bar --authfile $HOME/.docker/config.json
 ```
 
 ### Rebase
@@ -89,10 +93,13 @@ Options:
     Builder image
     Default: docker.io/paketobuildpacks/builder
 
+  --authfile AUTHFILE
+    Path to file containing registry credentials
+
 Arguments:
   IMAGE
     The name of the image to rebase
 
 Examples:
-  bpsh rebase foo/bar
+  bpsh rebase foo/bar --authfile $HOME/.docker/config.json
 ```

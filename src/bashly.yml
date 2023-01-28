@@ -1,6 +1,6 @@
 name: bpsh
 help: A shell script for Cloud Native Buildpacks using Podman and CNB lifecycle commands
-version: 0.1.0
+version: 0.2.0
 
 environment_variables:
 
@@ -25,10 +25,14 @@ commands:
     arg: builder
     help: Builder image
     default: docker.io/paketobuildpacks/builder
+  - long: --authfile
+    arg: authfile
+    help: Path to file containing registry credentials
 
   examples:
   - bpsh build foo/goapp --path /path/to/foo/goapp
   - bpsh build bar/phpapp --builder docker.io/paketobuildpacks/builder:full
+  - bpsh build foo/bar --authfile $HOME/.docker/config.json
 
   environment_variables:
 
@@ -46,6 +50,9 @@ commands:
     arg: builder
     help: Builder image
     default: docker.io/paketobuildpacks/builder
+  - long: --authfile
+    arg: authfile
+    help: Path to file containing registry credentials
 
   examples:
-  - bpsh rebase foo/bar
+  - bpsh rebase foo/bar --authfile $HOME/.docker/config.json
