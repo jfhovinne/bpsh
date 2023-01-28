@@ -14,6 +14,12 @@ It does not rely on the [Pack CLI](https://buildpacks.io/docs/tools/pack/).
 * [GNU bash](https://www.gnu.org/software/bash/) 4+
 * [Podman](https://podman.io/)
 
+## Install
+
+```
+wget https://raw.githubusercontent.com/jfhovinne/bpsh/master/bpsh && chmod +x bpsh
+```
+
 ## Usage
 
 ```
