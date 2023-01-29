@@ -7,7 +7,7 @@ and [Podman](https://podman.io/) to create a runnable app image from source code
 commands from within a [builder](https://buildpacks.io/docs/concepts/components/builder/)
 container to build or rebase images.
 
-It does not rely on the [Pack CLI](https://buildpacks.io/docs/tools/pack/).
+It does not rely on the [Pack CLI](https://buildpacks.io/docs/tools/pack/) nor Docker.
 
 ## Requirements
 
@@ -24,7 +24,7 @@ wget https://raw.githubusercontent.com/jfhovinne/bpsh/master/bpsh && chmod +x bp
 
 ```
 $ bpsh
-bpsh - A shell script for Cloud Native Buildpacks using Podman and CNB lifecycle commands
+bpsh - A shell script for building apps using Cloud Native Buildpacks and Podman
 
 Usage:
   bpsh COMMAND
@@ -32,7 +32,7 @@ Usage:
   bpsh --version | -v
 
 Commands:
-  build    Use Cloud Native Buildpacks to create a runnable app image from source code
+  build    Create a runnable app image from source code
   rebase   Rebase app image with latest run image
 ```
 
@@ -40,7 +40,7 @@ Commands:
 
 ```
 $ bpsh build --help
-bpsh build - Use Cloud Native Buildpacks to create a runnable app image from source code
+bpsh build - Create a runnable app image from source code
 
 Alias: b
 
@@ -63,6 +63,9 @@ Options:
   --authfile AUTHFILE
     Path to file containing registry credentials
 
+  --env, -e ENV (repeatable)
+    Set an environment variable
+
 Arguments:
   IMAGE
     The name of the image that will be built
@@ -71,6 +74,7 @@ Examples:
   bpsh build foo/goapp --path /path/to/foo/goapp
   bpsh build bar/phpapp --builder docker.io/paketobuildpacks/builder:full
   bpsh build foo/bar --authfile $HOME/.docker/config.json
+  bpsh build bar/foo --env FOO=bar --env BAR=foo
 ```
 
 ### Rebase

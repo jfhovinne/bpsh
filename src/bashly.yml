@@ -1,13 +1,13 @@
 name: bpsh
-help: A shell script for Cloud Native Buildpacks using Podman and CNB lifecycle commands
-version: 0.2.0
+help: A shell script for building apps using Cloud Native Buildpacks and Podman
+version: 0.3.0
 
 environment_variables:
 
 commands:
 - name: build
   alias: b
-  help: Use Cloud Native Buildpacks to create a runnable app image from source code
+  help: Create a runnable app image from source code
 
   args:
   - name: image
@@ -28,11 +28,17 @@ commands:
   - long: --authfile
     arg: authfile
     help: Path to file containing registry credentials
+  - long: --env
+    short: -e
+    arg: env
+    help: Set an environment variable
+    repeatable: true
 
   examples:
   - bpsh build foo/goapp --path /path/to/foo/goapp
   - bpsh build bar/phpapp --builder docker.io/paketobuildpacks/builder:full
   - bpsh build foo/bar --authfile $HOME/.docker/config.json
+  - bpsh build bar/foo --env FOO=bar --env BAR=foo
 
   environment_variables:
 

@@ -18,11 +18,11 @@ version_command() {
 # :command.usage
 bpsh_usage() {
   if [[ -n $long_usage ]]; then
-    printf "bpsh - A shell script for Cloud Native Buildpacks using Podman and CNB lifecycle commands\n"
+    printf "bpsh - A shell script for building apps using Cloud Native Buildpacks and Podman\n"
     echo
 
   else
-    printf "bpsh - A shell script for Cloud Native Buildpacks using Podman and CNB lifecycle commands\n"
+    printf "bpsh - A shell script for building apps using Cloud Native Buildpacks and Podman\n"
     echo
 
   fi
@@ -34,7 +34,7 @@ bpsh_usage() {
   echo
   # :command.usage_commands
   printf "%s\n" "Commands:"
-  printf "  %s   Use Cloud Native Buildpacks to create a runnable app image from source code\n" "build "
+  printf "  %s   Create a runnable app image from source code\n" "build "
   printf "  %s   Rebase app image with latest run image\n" "rebase"
   echo
 
@@ -56,11 +56,11 @@ bpsh_usage() {
 # :command.usage
 bpsh_build_usage() {
   if [[ -n $long_usage ]]; then
-    printf "bpsh build - Use Cloud Native Buildpacks to create a runnable app image from source code\n"
+    printf "bpsh build - Create a runnable app image from source code\n"
     echo
 
   else
-    printf "bpsh build - Use Cloud Native Buildpacks to create a runnable app image from source code\n"
+    printf "bpsh build - Create a runnable app image from source code\n"
     echo
 
   fi
@@ -100,6 +100,11 @@ bpsh_build_usage() {
     printf "    Path to file containing registry credentials\n"
     echo
 
+    # :flag.usage
+    printf "  %s\n" "--env, -e ENV (repeatable)"
+    printf "    Set an environment variable\n"
+    echo
+
     # :command.usage_args
     printf "%s\n" "Arguments:"
 
@@ -113,6 +118,7 @@ bpsh_build_usage() {
     printf "  bpsh build foo/goapp --path /path/to/foo/goapp\n"
     printf "  bpsh build bar/phpapp --builder docker.io/paketobuildpacks/builder:full\n"
     printf "  bpsh build foo/bar --authfile $HOME/.docker/config.json\n"
+    printf "  bpsh build bar/foo --env FOO=bar --env BAR=foo\n"
     echo
 
   fi
@@ -227,6 +233,7 @@ bpsh_build_command() {
   src=${args[--path]}
   builder=${args[--builder]}
   authfile=${args[--authfile]}
+  eval "envs=(${args[--env]})"
 
   CT=$(podman run -itd ${builder} /bin/sh)
   podman cp $src $CT:/src
@@ -234,6 +241,15 @@ bpsh_build_command() {
     podman exec $CT bash -c "mkdir -p /home/cnb/.docker"
     podman cp $authfile $CT:/home/cnb/.docker/config.json
   fi
+  for env in "${envs[@]}"; do
+      IFS='=' read -r key value <<< "$env"
+      if [[ "$key" != "" && "$value" != "" ]]; then
+          tmp=$(mktemp)
+          echo -n "$value" > $tmp
+          podman cp $tmp $CT:/platform/env/$key
+          rm $tmp
+      fi
+  done
   podman exec $CT bash -c "/cnb/lifecycle/creator -app=/src ${image}" 1>&2
   podman exec $CT bash -c "cat /layers/report.toml"
   podman stop $CT > /dev/null
@@ -409,6 +425,25 @@ bpsh_build_parse_requirements() {
         fi
         ;;
 
+      # :flag.case
+      --env | -e)
+
+        # :flag.case_arg
+        if [[ -n ${2+x} ]]; then
+
+          if [[ -z ${args['--env']+x} ]]; then
+            args['--env']="\"$2\""
+          else
+            args['--env']="${args[--env]} \"$2\""
+          fi
+          shift
+          shift
+        else
+          printf "%s\n" "--env requires an argument: --env, -e ENV" >&2
+          exit 1
+        fi
+        ;;
+
       -?*)
         printf "invalid option: %s\n" "$key" >&2
         exit 1
@@ -533,7 +568,7 @@ bpsh_rebase_parse_requirements() {
 
 # :command.initialize
 initialize() {
-  version="0.2.0"
+  version="0.3.0"
   long_usage=''
   set -e
 
